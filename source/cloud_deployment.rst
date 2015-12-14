@@ -19,73 +19,87 @@ System requirements:
 Kurento room demo installer
 ===========================
 
-To build the installation binaries from the source code, follow the instructions
-from the README file that can be found in the project 
-`kurento-room-demo <https://github.com/Kurento/kurento-room/tree/master/kurento-room-demo>`_.
+Demo binaries
+#############
 
-Running the application
-=======================
-After having built and unzipped the installation files, there are two options
-for running the demo application server:
+The demo has been configured to generate a zipped archive during the *package* 
+phase of a Maven build. To obtain it build the **kurento-room-demo** project 
+together with its required modules:
 
-- **user-level execution** - doesn't need additional installation steps, can
-  be done right away after uncompressing the installer
-- **system-level execution** - requires installation of the demo application
-  as a system service, which enables automatic startup after system reboots
+.. sourcecode:: bash
 
-In both cases, the application uses Spring Boot framework to run inside an
-embedded Tomcat container server, so there's no need for deployment inside an
-existing servlet container. If this is a requirement, modifications will have
-to be made to the project's build configuration (Maven) so that instead of a
-JAR with dependencies, the build process would generate a WAR file.
+   $ cd kurento-room
+   $ mvn clean package -Pdefault -am -pl kurento-room-demo
 
-To update to a newer version, it's suffices to follow once again the
-installation procedures.
+Now unzip the generated execution binaries (where ``x.y.z`` is the current 
+version and could include the ``-SNAPSHOT`` suffix):
 
-Configuration file
-==================
+.. sourcecode:: bash
 
-The file kroomdemo.conf.json contains the configuration of the demo application::
+   $ cd kurento-room-demo/target
+   $ unzip kurento-room-demo-x.y.z.zip
 
-    {
-       "kms": {
-          "uris": ["ws://localhost:8888/kurento","ws://127.0.0.1:8888/kurento"]
-       },
-       "app": {
-          "uri": "http://localhost:8080/"
-       },
-       "kurento": {
-          "client": {
-             //milliseconds
-             "requestTimeout": 20000
-          }
-       },
-       "demo": {
-          //mario-wings.png or wizard.png
-          "hatUrl": "mario-wings.png"
-          "hatCoords": {
-             // mario-wings hat
-             "offsetXPercent": -0.35F,
-             "offsetYPercent": -1.2F,
-             "widthPercent": 1.6F,
-             "heightPercent": 1.6F
 
-             //wizard hat
-             //"offsetXPercent": -0.2F,
-             //"offsetYPercent": -1.35F,
-             //"widthPercent": 1.5F,
-             //"heightPercent": 1.5F
-          },
-          "loopback" : {
-             "remote": false,
-             //matters only when remote is true
-             "andLocal": false
-          },
-          "authRegex": ".*",
-          "kmsLimit": 10
-       }
-    }
+.. _server-configuration:
 
+Configuration
+#############
+
+The configuration file, ``kroomdemo.conf.json`` is located in the ``config``
+folder inside the uncompressed installation binaries. When installing the
+demo application as a system service, the configuration files will be located 
+inside ``/etc/kurento``.
+
+.. sourcecode:: bash
+
+   $ cd kurento-room-demo-x.y.z
+   $ vim config/kroomdemo.conf.json
+   ## or ##
+   $ vim /etc/kurento/kroomdemo.conf.json
+
+The default content of this file:
+
+.. sourcecode:: json
+
+   {
+      "kms": {
+         "uris": ["ws://localhost:8888/kurento", "ws://127.0.0.1:8888/kurento"]
+      },
+      "app": {
+         "uri": "https://localhost:8443/"
+      },
+      "kurento": {
+         "client": {
+            //milliseconds
+            "requestTimeout": 20000
+         }
+      },
+      "demo": {
+         //mario-wings.png or wizard.png
+         "hatUrl": "mario-wings.png",
+         "hatCoords": {
+            // mario-wings hat
+            "offsetXPercent": -0.35F,
+            "offsetYPercent": -1.2F,
+            "widthPercent": 1.6F,
+            "heightPercent": 1.6F
+            
+            //wizard hat
+            //"offsetXPercent": -0.2F,
+            //"offsetYPercent": -1.35F,
+            //"widthPercent": 1.5F,
+            //"heightPercent": 1.5F
+         },
+         "loopback" : {
+            "remote": false,
+            //matters only when remote is true
+            "andLocal": false
+         },
+         "authRegex": ".*",
+         "kmsLimit": 1000
+      }
+   }
+   
 With the following key meanings:
 
 - **kms.uris** is an array of WebSocket addresses used to initialize
@@ -125,3 +139,91 @@ With the following key meanings:
     exception if the pattern has been specified and it doesn't match the name.
   - **kmsLimit** is the maximum number of pipelines that can be created in a
     KurentoClient.
+
+Logging configuration
+#####################
+
+The default logging configuration can be overwritten by editing the file 
+``kroomdemo-log4j.properties``, also found in the ``config`` folder (or
+``/etc/kurento`` for system-wide installations).
+
+.. sourcecode:: bash
+
+   $ cd kurento-room-demo-x.y.z
+   $ vim config/kroomdemo-log4j.properties
+   ## or ##
+   $ vim /etc/kurento/kroomdemo-log4j.properties
+
+In it, the location of the server's output log file can be set up, the default 
+location will be ``kurento-room-demo-x.y.z/logs/`` (or ``/var/log/kurento/`` 
+for system-wide installations).
+
+To change it, replace the ``${kroomdemo.log.file}`` variable for an 
+absolute path on your system:
+
+.. sourcecode:: bash
+
+   log4j.appender.file.File=${kroomdemo.log.file}
+
+Running the application
+=======================
+After having built and unzipped the installation files, there are two options
+for running the demo application server:
+
+- **user-level execution** - doesn't need additional installation steps, can
+  be done right away after uncompressing the installer
+- **system-level execution** - requires installation of the demo application
+  as a system service, which enables automatic startup after system reboots
+
+In both cases, the application uses Spring Boot framework to run inside an
+embedded Tomcat container server, so there's no need for deployment inside an
+existing servlet container. If this is a requirement, modifications will have
+to be made to the project's build configuration (Maven) so that instead of a
+JAR with dependencies, the build process would generate a WAR file.
+
+Run at user-level
+#################
+
+After having :ref:`configured <server-configuration>` the server instance just 
+execute the start script: 
+
+.. sourcecode:: bash
+
+   $ cd kurento-room-demo-x.y.z
+   $ ./bin/start.sh
+
+Run as daemon
+#############
+
+First install the demo after having built and uncompressed the generated
+binaries. **sudo** privileges are required to install it as a service:
+
+.. sourcecode:: bash
+
+   $ cd kurento-room-demo-x.y.z
+   $ sudo ./bin/install.sh
+
+The service **kroomdemo** will be automatically started.
+
+Now, you can configure the Room demo server as stated in the 
+:ref:`previous section <server-configuration>` and restart the service.
+
+.. sourcecode:: bash
+   
+   $ sudo service kroomdemo {start|stop|status|restart|reload}
+
+Troubleshooting
+###############
+
+For quickstarting and troubleshooting the demo use the following command to
+execute the *fat jar* from the **lib** folder:
+
+.. sourcecode:: bash
+
+   $ cd kurento-room-demo-x.y.z/lib
+   $ java -jar kurento-room-demo.jar
+
+Version upgrade
+###############
+
+To update to a newer version, please repeat the installation procedures.

@@ -14,6 +14,7 @@ Table of Contents
 
    description.rst
    code_structure.rst
+   quick_start.rst
    cloud_deployment.rst
    java_api_integration.rst
    websocket_api_room_server.rst
