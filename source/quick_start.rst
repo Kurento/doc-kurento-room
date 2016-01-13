@@ -91,4 +91,4 @@ In this example, we've instructed the demo to use a different URI of a running
 KMS instance when creating the ``KurentoClient`` required by the Room API.
 
 More details on the demo's configuration and execution can be found in the
-:doc:`deployment </cloud_deployment>` section.
+:doc:`deployment </demo_deployment>` section.

@@ -1,17 +1,19 @@
-%%%%%%%%%%%%%%%%
-Cloud deployment
-%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+Demo deployment
+%%%%%%%%%%%%%%%
 
-How to install, configure and deploy to cloud the Rooms app and how to publish
-the API. On a cloud instance which meets the following requirements, one can
-install Kurento Rooms applications as a system service (e.g.
-``kurento-room-demo``). There's also the possibility to run the demo manually
-using the provided script.
+This section explains how to install, configure and deploy the Room demo application 
+and how to publish the API. 
+
+On machines which meet the following requirements, one can install Kurento Room 
+applications as a system service (e.g. ``kurento-room-demo``). There's also the 
+possibility to manually run the demo using the provided script.
 
 System requirements:
 
 - Ubuntu 14.04
 - JDK 7 or 8
+- Maven
 - Kurento Media Server or connection with at least a running instance (to
   install follow the official
   `guide <http://www.kurento.org/docs/current/installation_guide.html>`_)
@@ -19,11 +21,14 @@ System requirements:
 Kurento room demo installer
 ===========================
 
+Currently, there are no binary releases of Kurento Room Demo. In order to deploy 
+a new demo server, it is needed to build it from sources.
+
 Demo binaries
 #############
 
 The demo has been configured to generate a zipped archive during the *package* 
-phase of a Maven build. To obtain it build the **kurento-room-demo** project 
+phase of a Maven build. To obtain it, build the **kurento-room-demo** project 
 together with its required modules:
 
 .. sourcecode:: bash
@@ -102,43 +107,73 @@ The default content of this file:
    
 With the following key meanings:
 
-- **kms.uris** is an array of WebSocket addresses used to initialize
-  KurentoClient instances (each instance represents a Kurento Media Server). In
+- ``kms.uris`` is an array of WebSocket addresses used to initialize
+  ``KurentoClient`` instances (each instance represents a Kurento Media Server). In
   the default configuration, for the same KMS the application will create two
-  KurentoClient objects. The KurentoClientProvider implementation for this demo
-  (org.kurento.room.demo.FixedNKmsManager) will return KurentoClient instances
+  ``KurentoClient`` objects. The ``KurentoClientProvider`` implementation for this demo
+  (``org.kurento.room.demo.FixedNKmsManager``) will return ``KurentoClient`` instances
   on a round-robin base or, if the user's name follows a certain pattern, will
   return the less loaded instance. The pattern check is hardcoded and SLA users
   are considered those whose name starts with the string special (e.g.
-  specialUser).
-
-- **app.uri** is the demo application's URL and is mainly used for building
-  URLs of images used in media filters (such as the hat filter). This URL must
-  be accessible from any KMS defined in kms.uris.
-
-- **kurento.client.requestTimeout** is a tweak to prevent timeouts in the KMS
+  *specialUser*).
+- ``kurento.client.requestTimeout`` is a tweak to prevent timeouts in the KMS
   communications during heavy load (e.g. lots of peers). The default value of
-  the timeout is 10 seconds. demo configuration:
+  the timeout is 10 seconds.
+- ``app.uri`` is the demo application's URL and is mainly used for building
+  URLs of images used in media filters (such as the hat filter). This URL must
+  be accessible from any KMS defined in ``kms.uris``.
+- ``demo.hatUrl`` sets the image used for the ``FaceOverlayFilter`` applied to the
+  streamed  media when the user presses the corresponding button in the demo
+  interface. The filename of the image is relative to the static web
+  resources folder ``img/``.
+- ``demo.hatCoords`` represents the JSON encoding of the parameters required to
+  configure the overlaid image. We provide the coordinates for two hat
+  images, *mario-wings.png* and *wizard.png*.
+- ``demo.loopback.remote`` if true, the users will see their own video using
+  the loopbacked stream from the server. Thus, if the user enables the hat
+  filter on her video stream, she'll be able to visualize the end result
+  after having applied the filter.
+- ``demo.loopback.andLocal`` if true, besides displaying the loopback media,
+  the client interface will also provide the original (and local) media stream.
+- ``demo.authRegex`` is the username pattern that allows the creation of a room
+  only when it matches the pattern. This is done during the call to obtain an 
+  instance of ``KurentoClient``, the provider will throw an exception if the 
+  pattern has been specified and it doesn't match the name.
+- ``demo.kmsLimit`` is the maximum number of pipelines that can be created in a
+  ``KurentoClient``.
 
-  - **hatUrl** sets the image used for the FaceOverlayFilter applied to the
-    streamed  media when the user presses the corresponding button in the demo
-    interface. The filename of the image is relative to the static web
-    resources folder img/.
-  - **hatCoords** represents the JSON encoding of the parameters required to
-    configure the overlaid image. We provide the coordinates for two hat
-    images, mario-wings.png and wizard.png.
-  - **loopback.remote** if true, the users will see their own video using
-    the loopbacked stream from the server. Thus, if the user enables the hat
-    filter on her video stream, she'll be able to visualize the end result
-    after having applied the filter.
-  - **loopback.andLocal** if true, besides displaying the loopback media,
-    the client interface will also provide the original (and local) media stream
-  - **authRegex** is the username pattern that allows the creation of a room
-    only when the requester's name matches the pattern. This is done during the
-    call to obtain an instance of KurentoClient, the provider will throw an
-    exception if the pattern has been specified and it doesn't match the name.
-  - **kmsLimit** is the maximum number of pipelines that can be created in a
-    KurentoClient.
+HTTPS
+######
+
+The application uses a Java keystore - ``keystore.jks`` - containing a 
+self-signed certificate, which is located in the same folder as the JAR 
+executable file.
+
+The keystore's configuration is read from the ``application.properties`` file, a 
+specific Spring Boot configuration file. 
+Any changes like the keystore's name or password can be applied directly into 
+this file.
+
+These settings are read automatically by the application (not required to be on the
+command line).
+
+.. sourcecode:: json
+
+   server.port: 8443
+   server.address: 0.0.0.0
+   server.ssl.key-store: keystore.jks
+   server.ssl.key-store-password: kurento
+   server.ssl.keyStoreType: JKS
+   server.ssl.keyAlias: kurento-selfsigned
+
+In order to disable HTTPS, remove or rename the file, or remove those lines that 
+contain **ssl** and change the value of ``server.port`` to a more suitable value 
+(recommended only if using a secure proxy with SSL).
+
+``server.address`` is an IP address that tells the embedded Tomcat to bind 
+to (default value is *0.0.0.0* where it listens on all available addresses).
+It is useful when securing the application, by indicating the loopback IP and 
+serving all connections through a secure proxy.
 
 Logging configuration
 #####################
