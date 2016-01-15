@@ -13,3 +13,4 @@ nbactions.xml
 *bower_components/
 .externalToolBuilders
 *.rst-e
+*.pyc
