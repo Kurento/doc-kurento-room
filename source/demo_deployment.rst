@@ -12,8 +12,16 @@ System requirements:
 
 - Ubuntu 14.04
 - :term:`Git` (to obtain the source code)
-- JDK 7 or 8
+- Java JDK version 7 or 8
 - :term:`Maven` (for building from sources)
+- :term:`Bower` (which in turn requires :term:`Node.js`)
+
+  .. sourcecode:: bash
+  
+   curl -sL https://deb.nodesource.com/setup | sudo bash -
+   sudo apt-get install -y nodejs
+   npm install -g bower
+
 - :term:`Kurento Media Server` or connection with at least a running instance (to
   install follow the official
   `guide <http://www.kurento.org/docs/current/installation_guide.html>`_)
@@ -41,7 +49,7 @@ together with its required modules:
 .. sourcecode:: bash
 
    $ cd kurento-room
-   $ mvn clean package -Pdefault -am -pl kurento-room-demo
+   $ mvn clean package -am -pl kurento-room-demo -DskipTests
 
 Now unzip the generated execution binaries:
 
