@@ -5,8 +5,8 @@
 # IMPORTANT: Notice that DOC_VERSION should be the same as variable "release" in conf.py,
 # so when this variable is updated, it should be also updated in conf.py
 
-DOC_VERSION = 6.3.0
-MAVEN_VERSION = 6.3.0
+DOC_VERSION = 6.3.1-dev
+MAVEN_VERSION = 6.3.1-SNAPSHOT
 
 # You can set these variables from the command line.
 SPHINXOPTS    =
