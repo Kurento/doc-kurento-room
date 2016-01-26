@@ -6,6 +6,7 @@
 # so when this variable is updated, it should be also updated in conf.py
 
 DOC_VERSION = 6.3.1-dev
+KURENTO_JAVA_VERSION = 6.3.1-SNAPSHOT
 MAVEN_VERSION = 6.3.1-SNAPSHOT
 
 # You can set these variables from the command line.
@@ -108,8 +109,8 @@ langdoc:
 	  # kurento-client javadoc
 	  rm -rf $(BUILDDIR)/langdoc/kurento-client
 	  cd  $(BUILDDIR)/langdoc && git clone https://github.com/Kurento/kurento-java.git && \
-	  cd kurento-java && git checkout kurento-java-$(MAVEN_VERSION) || \
-	  git checkout $(MAVEN_VERSION) || echo "Using master branch"
+	  cd kurento-java && git checkout kurento-java-$(KURENTO_JAVA_VERSION) || \
+	  git checkout $(KURENTO_JAVA_VERSION) || echo "Using master branch"
 	  mv $(BUILDDIR)/langdoc/kurento-java/kurento-client $(BUILDDIR)/langdoc
 	  cd $(BUILDDIR)/langdoc/kurento-client && mvn clean package -DskipTests
 	  rsync -av $(BUILDDIR)/langdoc/kurento-client/target/generated-sources/kmd/* $(BUILDDIR)/langdoc/kurento-client/src/main/java/
