@@ -12,7 +12,7 @@ System requirements:
 
 - Ubuntu 14.04
 - :term:`Git` (to obtain the source code)
-- Java JDK version 7 or 8
+- Java JDK version 8
 - :term:`Maven` (for building from sources)
 - :term:`Bower` (which in turn requires :term:`Node.js`)
 
@@ -34,7 +34,7 @@ a new demo server, it is needed to build it from sources.
 
 .. sourcecode:: bash
 
-   $ git clone git@github.com:Kurento/kurento-room.git
+   $ git clone https://github.com/Kurento/kurento-room.git
    $ cd kurento-room
    # checkout the latest tag
    $ git checkout $(git describe --abbrev=0 --tags)
