@@ -2,13 +2,13 @@
 Demo deployment
 %%%%%%%%%%%%%%%
 
-This section explains how to install, configure and deploy the Room demo application. 
-
 On machines which meet the following requirements, one can install Kurento Room 
-applications as a system service (e.g. ``kurento-room-demo``). There's also the 
-possibility to manually run the demo using the provided script.
+applications as a system service (e.g. ``kurento-room-demo``).
 
-System requirements:
+This section explains how to deploy (install, configure and execute) the Room Demo application. 
+We also provide a way to run the demo without resorting to a system-wide installation.
+
+**System requirements:**
 
 - Ubuntu 14.04
 - :term:`Git` (to obtain the source code)
@@ -26,11 +26,14 @@ System requirements:
   install follow the official
   `guide <http://www.kurento.org/docs/current/installation_guide.html>`_)
 
-Kurento room demo installer
-===========================
+Installation procedures
+=======================
+
+Demo binaries
+#############
 
 Currently, there are no binary releases of Kurento Room Demo. In order to deploy 
-a new demo server, it is needed to build it from sources.
+a new demo server, it is required to build it from sources.
 
 .. sourcecode:: bash
 
@@ -39,8 +42,8 @@ a new demo server, it is needed to build it from sources.
    # checkout the latest tag
    $ git checkout $(git describe --abbrev=0 --tags)
 
-Demo binaries
-#############
+Build from source
+#################
 
 The demo has been configured to generate a zipped archive during the *package* 
 phase of a Maven build. To obtain it, build the **kurento-room-demo** project 
@@ -214,15 +217,17 @@ The default logging configuration can be overwritten by editing the file
    $ vim /etc/kurento/kurento-room-demo-log4j.properties
 
 In it, the location of the server's output log file can be set up, the default 
-location will be ``kurento-room-demo-|MAVEN_VERSION|/logs/`` (or ``/var/log/kurento/`` 
-for system-wide installations).
+location will be ``kurento-room-demo-|MAVEN_VERSION|/logs/kurento-room-demo.log`` 
+(or ``/var/log/kurento/kurento-room-demo.log`` for system-wide installations).
 
-To change it, replace the ``${application.log.file}`` variable for an 
+To change it, replace the ``${application.log.file}`` variable with an 
 absolute path on your system:
 
 .. sourcecode:: bash
 
    log4j.appender.file.File=${application.log.file}
+   # e.g. -->
+   log4j.appender.file.File=/home/user/demo.log
 
 Running the application
 =======================

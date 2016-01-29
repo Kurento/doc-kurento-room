@@ -121,5 +121,7 @@ These properties can be overwritten on the command-line when starting the demo s
 In this example, we've instructed the demo to use a different URI of a running 
 :term:`KMS` instance when creating the :term:`KurentoClient` required by the Room API.
 
-More details on the demo's configuration and execution can be found in the
-:doc:`deployment </demo_deployment>` section.
+.. note::
+
+   More details on the demo's configuration and execution can be found in the 
+   :doc:`deployment </demo_deployment>` section.
